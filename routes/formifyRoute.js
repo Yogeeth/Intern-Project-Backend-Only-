@@ -1,7 +1,6 @@
 const express = require('express');
 const Formify = require('../models/formify');
 const router = express.Router();
-
 router.post('/formify', async (req, res) => {
     try {
         const { email } = req.body;

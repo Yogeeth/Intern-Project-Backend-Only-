@@ -1,0 +1,15 @@
+{
+    "version": 2,
+    "builds": [
+      { "src": "index.js", "use": "@vercel/node" }
+    ],
+    "routes": [
+      { "src": "/formapi/(.*)", "dest": "/index.js" },
+      { "src": "/clientapi/(.*)", "dest": "/index.js" },
+      { "src": "/formifyapi/(.*)", "dest": "/index.js" },
+      { "src": "/login", "dest": "/index.js" },
+      { "src": "/dashboard", "dest": "/index.js" },
+      { "src": "/check", "dest": "/index.js" }
+    ]
+  }
+  

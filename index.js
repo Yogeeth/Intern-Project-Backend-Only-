@@ -5,75 +5,75 @@ const compression = require('compression');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+
+// Load environment variables
+dotenv.config();
+
 const Formroutes = require('./routes/formroutes'); 
 const CLientroutes = require('./routes/clientRoute');
 const formifyRoute = require('./routes/formifyRoute');
-dotenv.config();
-const SECRET_KEY = 'ASDYGK29';
-const app = express();
 
+const app = express();
+const SECRET_KEY = process.env.SECRET_KEY || 'ASDYGK29'; // Use environment variable for secret key
+
+// Middleware
 app.use(cors({
-  origin: "http://localhost:5173", 
-  methods: ["GET", "POST","DELETE"], // Allowed methods
-  credentials: true 
+  origin: "http://localhost:5173", // Replace with your frontend's URL in production
+  methods: ["GET", "POST", "DELETE"],
+  credentials: true
 }));
 app.use(express.json());
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.error("Failed to connect to MongoDB:", err));
-
-  app.get('/check', (req, res) => {
-    res.send('Hello, ANALA!');
-});
-
 app.use(compression());
 app.use(bodyParser.json());
 
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("Connected to MongoDB"))
+.catch(err => console.error("Failed to connect to MongoDB:", err));
+
+// Routes
+app.get('/check', (req, res) => {
+  res.send('Hello, ANALA!');
+});
 
 const USERNAME = 'yogeeth';
 const PASSWORD = 'yogeethgk123456789';
 
+// Login Route
 app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    console.log(username,password)
-    if (username === USERNAME && password === PASSWORD) {
-        // Generate a JWT token
-        const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '30m' });
-        return res.json({ token });
-    }
-
-    // Invalid credentials
-    return res.status(401).json({ message: 'Invalid credentials' });
+  const { username, password } = req.body;
+  if (username === USERNAME && password === PASSWORD) {
+    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '30m' });
+    return res.json({ token });
+  }
+  return res.status(401).json({ message: 'Invalid credentials' });
 });
 
 // Middleware to verify the token
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.sendStatus(401);
 
-    if (!token) return res.sendStatus(401);
-
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) return res.sendStatus(403);
-        req.user = user;
-        next();
-    });
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
 };
 
 // Protected Route
 app.get('/dashboard', authenticateToken, (req, res) => {
-    res.json({ message: `Welcome to the dashboard, ${req.user.username}!` });
+  res.json({ message: `Welcome to the dashboard, ${req.user.username}!` });
 });
 
-
-app.use('/formapi', Formroutes); // Routes will be available under /api/form
+// Use routes for different APIs
+app.use('/formapi', Formroutes); 
 app.use('/clientapi', CLientroutes); 
-app.use('/formifyapi', formifyRoute); 
+app.use('/formifyapi', formifyRoute);
 
-
-
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// Export the app for serverless deployment
+module.exports = app;

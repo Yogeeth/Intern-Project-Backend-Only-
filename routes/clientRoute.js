@@ -1,6 +1,6 @@
 const express = require('express');
 const Client = require('../models/client'); 
-
+const Form = require('../models/form');
 
 
 // Create a router
@@ -141,7 +141,7 @@ router.get('/clients-per-year', async (req, res) => {
       
   
       const deletedDocument = await Client.findByIdAndDelete(id);
-  
+      const deletedDocument1 = await Form.findByIdAndDelete(id);
       if (!deletedDocument) {
         return res.status(404).json({ message: 'Document not found' });
       }
