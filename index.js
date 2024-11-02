@@ -17,11 +17,7 @@ const app = express();
 const SECRET_KEY = process.env.SECRET_KEY || 'ASDYGK29'; // Use environment variable for secret key
 
 // Middleware
-app.use(cors({
-  origin: "http://localhost:5173", // Replace with your frontend's URL in production
-  methods: ["GET", "POST", "DELETE"],
-  credentials: true
-}));
+
 app.use(express.json());
 app.use(compression());
 app.use(bodyParser.json());
@@ -32,7 +28,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   useUnifiedTopology: true
 })
 .then(() => console.log("Connected to MongoDB"))
-.catch(err => console.error("Failed to connect to MongoDB:", err));
+.catch(err => console.error("Failed to connect to MongoDB:", process.env.MONGODB_URI,process.env.PORT,err));
 
   app.get('/check', (req, res) => {
     res.send('Hello, ANALA!');
