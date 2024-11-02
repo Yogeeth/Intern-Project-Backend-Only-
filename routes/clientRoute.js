@@ -1,5 +1,5 @@
 const express = require('express');
-const Client = require('../models/client'); // Import the Form model
+const Client = require('../models/client'); 
 
 
 
@@ -24,7 +24,7 @@ router.post('/client', async (req, res) => {
             heading,
             email,
             username,
-            password // Will be hashed in the model's pre-save middleware
+            password 
         });
 
         const savedForm = await newForm.save();
@@ -63,7 +63,7 @@ router.get('/client/:code', async (req, res) => {
     const { code } = req.params;
 
     try {
-        // Find the client by the provided unique code
+        
         const client = await Client.findOne({ code });
 
         if (!client) {
@@ -73,7 +73,7 @@ router.get('/client/:code', async (req, res) => {
             });
         }
 
-        // Respond with the found client data
+        
         res.status(200).json({
             success: true,
             data: client
@@ -92,12 +92,12 @@ router.get('/clients-per-year', async (req, res) => {
       const clientsPerYear = await Client.aggregate([
         {
           $group: {
-            _id: { $year: { $toDate: "$submissionDate" } }, // Group by year extracted from submissionDate
-            count: { $sum: 1 } // Count clients in each year
+            _id: { $year: { $toDate: "$submissionDate" } }, 
+            count: { $sum: 1 } 
           }
         },
         {
-          $sort: { _id: 1 } // Sort by year (ascending order)
+          $sort: { _id: 1 }
         }
       ]);
   
@@ -120,7 +120,7 @@ router.get('/clients-per-year', async (req, res) => {
           }
         },
         {
-          $sort: { "_id.year": 1, "_id.month": 1 } // Sort by year and month in ascending order
+          $sort: { "_id.year": 1, "_id.month": 1 }
         }
       ]);
   
@@ -137,7 +137,7 @@ router.get('/clients-per-year', async (req, res) => {
     try {
       const { id } = req.params;
   
-      // Check if ID is a valid MongoDB ObjectId
+    
       
   
       const deletedDocument = await Client.findByIdAndDelete(id);

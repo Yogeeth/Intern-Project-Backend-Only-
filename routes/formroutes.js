@@ -1,17 +1,12 @@
 const express = require('express');
-const Form = require('../models/form'); // Import the Form model
-
-// Create a router
+const Form = require('../models/form'); 
 const router = express.Router();
-
-// POST route to create a new form entry
 router.post('/form', async (req, res) => {
     
     try {
         const { code,name,email,subject,message } = req.body;
         console.log(req.body)
         
-        // Create a new form entry
         const form = new Form({code, name, subject, message,email });
         await form.save();
 
@@ -20,8 +15,6 @@ router.post('/form', async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 });
-
-// GET route to retrieve all form entries
 router.get('/form/:code', async (req, res) => {
     const { code } = req.params;
     try {
@@ -41,28 +34,22 @@ router.get('/form', async (req, res) => {
 });
 router.get('/submissions-per-month', async (req, res) => {
     try {
-        // Aggregating the submissions data by year and month
+        
         const result = await Form.aggregate([
             {
                 $group: {
                     _id: {
-                        $dateToString: { format: "%Y-%m", date: "$submissionDate" }, // Group by year and month
+                        $dateToString: { format: "%Y-%m", date: "$submissionDate" }, 
                     },
-                    totalSubmissions: { $sum: 1 }, // Count the number of submissions
+                    totalSubmissions: { $sum: 1 }, 
                 },
             },
             {
-                $sort: { _id: 1 }, // Sort by month
+                $sort: { _id: 1 }, 
             },
         ]);
 
-        // Function to format the aggregated data
-        
 
-        // Format the result
-        
-
-        // Send the formatted result as a response
         res.status(200).json(result);
     } catch (error) {
         console.error("Error fetching submissions data:", error);
@@ -76,18 +63,17 @@ router.get('/submissions-per-year', async (req, res) => {
             {
                 $group: {
                     _id: {
-                        year: { $year: "$submissionDate" },  // Extract year
-                        month: { $month: "$submissionDate" }, // Extract month
+                        year: { $year: "$submissionDate" },  
+                        month: { $month: "$submissionDate" }, 
                     },
-                    totalSubmissions: { $sum: 1 }, // Count the number of submissions
+                    totalSubmissions: { $sum: 1 },
                 },
             },
             {
-                $sort: { "_id.year": 1, "_id.month": 1 }, // Sort by year and month
+                $sort: { "_id.year": 1, "_id.month": 1 }, 
             },
         ]);
 
-        // Format the result to include the year and month in the desired format
         const formattedResult = result.map(item => ({
             _id: {
                 year: item._id.year,

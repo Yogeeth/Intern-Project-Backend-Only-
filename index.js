@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require("cors");
 const jwt = require('jsonwebtoken');
+const compression = require('compression');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const Formroutes = require('./routes/formroutes'); // Import the routes
+const Formroutes = require('./routes/formroutes'); 
 const CLientroutes = require('./routes/clientRoute');
 const formifyRoute = require('./routes/formifyRoute');
 dotenv.config();
@@ -12,12 +13,11 @@ const SECRET_KEY = 'ASDYGK29';
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:5173", // Replace with your React app URL
+  origin: "http://localhost:5173", 
   methods: ["GET", "POST","DELETE"], // Allowed methods
-  credentials: true // Allow cookies to be sent if needed
+  credentials: true 
 }));
 app.use(express.json());
-// Connect to MongoDB (replace with your MongoDB connection string)
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -27,20 +27,17 @@ mongoose.connect(process.env.MONGODB_URI, {
   app.get('/check', (req, res) => {
     res.send('Hello, ANALA!');
 });
-// Use the routes
 
-
+app.use(compression());
 app.use(bodyParser.json());
 
-// Hardcoded user credentials
+
 const USERNAME = 'yogeeth';
 const PASSWORD = 'yogeethgk123456789';
 
-// Login Route
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     console.log(username,password)
-    // Validate credentials
     if (username === USERNAME && password === PASSWORD) {
         // Generate a JWT token
         const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '30m' });
@@ -78,6 +75,5 @@ app.use('/formifyapi', formifyRoute);
 
 
 
-// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

@@ -9,7 +9,6 @@ router.post('/formify', async (req, res) => {
         const newForm = new Formify({
 
             email
-// Will be hashed in the model's pre-save middleware
         });
 
         const savedForm = await newForm.save();
@@ -27,7 +26,7 @@ router.post('/formify', async (req, res) => {
     }
 });
 
-// GET route to retrieve all form entries
+
 router.get('/formify', async (req, res) => {
     try {
         const forms = await Formify.find();
