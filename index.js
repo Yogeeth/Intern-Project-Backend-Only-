@@ -18,7 +18,7 @@ const SECRET_KEY = process.env.SECRET_KEY || 'ASDYGK29'; // Use environment vari
 
 // Middleware
 app.use(cors({
-  origin: "https://formify-alpha.vercel.app", // Replace with your frontend's URL in production
+  origin: "https://formifyforms.netlify.app", // Replace with your frontend's URL in production
   methods: ["GET", "POST", "DELETE"],
   credentials: true
 }));
