@@ -19,7 +19,8 @@ const SECRET_KEY = process.env.SECRET_KEY || 'ASDYGK29'; // Use environment vari
 // Middleware
 app.use(cors({
   origin: "http://localhost:5173", // Replace with your frontend's URL in production
-  methods: ["GET", "POST", "DELETE"]
+  methods: ["GET", "POST", "DELETE"],
+  credentials: true
 }));
 app.use(express.json());
 app.use(compression());
